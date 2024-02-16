@@ -8,6 +8,7 @@ using namespace std;
 
 
 class Jugadores {
+    public:
     string nombre;
     string apellido;
     string posicion;
@@ -16,18 +17,19 @@ class Jugadores {
 };
 
 class Equipos {
+    public:
     string nombre;
     Jugadores *jugadores;
 };
 class DirectoresTecnicos {
+    public:
     string nombre;
     string apellido;
     int tiempoExperiencia;
 };
 
 class TrabajoArchivo {
-
-    public:
+    int *A;
     Equipos *equipos;
     Jugadores *jugadores;
     DirectoresTecnicos *directoresTecnicos;
@@ -54,29 +56,28 @@ class TrabajoArchivo {
                     continue;
                 }
 
-                if( info == 'E') {
-                    numEquipos++;
-                }
-
                 if( line == "J" ) {
                     info = 'J';
                     continue;
-                }
-
-                if( info == 'J') {
-                    numJugadores++;
                 }
                 
                 if( line == "D" ) {
                     info = 'D';
                     continue;
                 }
+                if( info == 'E') {
+                    numEquipos++;
+                }
+                
+
+                if( info == 'J') {
+                    numJugadores++;
+                }
                 
                 if( info == 'D') {
                     numDirectoresTecnicos++;
                 }
 
-                cout << line << endl;
 
 
             }
@@ -85,23 +86,100 @@ class TrabajoArchivo {
     }
 
   
+    public:
     void leerEntrada(){
         string line;
         ifstream archivo(nombreArchivo.c_str());
+        char info;
+        contarArchivo();
+        
+        jugadores = new Jugadores[numJugadores];
+        equipos = new Equipos[numEquipos];
+        directoresTecnicos = new DirectoresTecnicos[numDirectoresTecnicos];
         if(archivo.is_open()) 
         {
+            int equipoActual = 0;
+            int jugadorActual = 0;
+            int directorActual = 0;
+
             while (!archivo.eof())
             {
                 string palabra;
+
                 
                 getline(archivo, line);
 
+                
+
                 if(line == "E") {
-                    cout << "si entra en E";
+                    info = 'E';
                     continue;
                 }
 
-                cout << line << endl;
+                if( line == "J" ) {
+                    info = 'J';
+                    continue;
+                }
+                
+                if( line == "D" ) {
+                    info = 'D';
+                    continue;
+                }
+                if( info == 'E') {
+                        equipos[equipoActual].nombre = line;
+                        equipoActual++;
+                }
+                
+
+                if( info == 'J') {
+                    string caracter = "";
+                    int elem = 0;
+                    for (int i = line.size() - 1; i >= 0 ; i--)
+                    {
+                        caracter = line[i] + caracter;
+
+                        if ( i == 0 || line[ i - 1] == ' '){
+                            if( elem == 0 ){
+                                palabra = caracter;
+                                elem++;
+                                int exp = stoi(palabra);
+                                jugadores[jugadorActual].experiencia = exp;
+                                caracter = "";
+                            }
+                            else if ( elem == 1){
+                                palabra = caracter;
+                                elem++;
+                                jugadores[jugadorActual].posicion = palabra;
+                                caracter = "";
+                            } 
+                            else if( elem == 2){
+                                palabra = caracter;
+                                elem++;
+                                jugadores[jugadorActual].nombre = palabra;
+                                caracter="";
+                            }
+                            else if( elem == 3){
+                                palabra = caracter;
+                                elem++;
+                                jugadores[jugadorActual].apellido = palabra;
+                                caracter="";
+                            }
+                        }
+                            else if( elem == 4){
+                                palabra = caracter;
+                                jugadores[jugadorActual].equipo = palabra;
+                                caracter="";
+                            }
+                    }
+                    jugadorActual++;
+                }
+                
+                if( info == 'D') {
+                    numDirectoresTecnicos++;
+                }
+
+
+
 
 
             }
@@ -186,11 +264,7 @@ int main () {
 
     TrabajoArchivo entradaIn("Entrada.in.txt");
 
-    entradaIn.contarArchivo();
-
-    cout << entradaIn.numDirectoresTecnicos << endl;
-    cout << entradaIn.numEquipos << endl;
-    cout << entradaIn.numJugadores << endl;
+    entradaIn.leerEntrada();
 
     
     char op;
