@@ -29,7 +29,7 @@ class DirectoresTecnicos {
 };
 
 class TrabajoArchivo {
-    int *A;
+    public:
     Equipos *equipos;
     Jugadores *jugadores;
     DirectoresTecnicos *directoresTecnicos;
@@ -80,13 +80,13 @@ class TrabajoArchivo {
 
 
 
-            }
+           }
             
         }
     }
 
   
-    public:
+    
     void leerEntrada(){
         string line;
         ifstream archivo(nombreArchivo.c_str());
@@ -126,6 +126,7 @@ class TrabajoArchivo {
                     continue;
                 }
                 if( info == 'E') {
+
                         equipos[equipoActual].nombre = line;
                         equipoActual++;
                 }
@@ -137,6 +138,8 @@ class TrabajoArchivo {
                     for (int i = line.size() - 1; i >= 0 ; i--)
                     {
                         caracter = line[i] + caracter;
+
+                    
 
                         if ( i == 0 || line[ i - 1] == ' '){
                             if( elem == 0 ){
@@ -155,13 +158,13 @@ class TrabajoArchivo {
                             else if( elem == 2){
                                 palabra = caracter;
                                 elem++;
-                                jugadores[jugadorActual].nombre = palabra;
+                                jugadores[jugadorActual].apellido = palabra;
                                 caracter="";
                             }
                             else if( elem == 3){
                                 palabra = caracter;
                                 elem++;
-                                jugadores[jugadorActual].apellido = palabra;
+                                jugadores[jugadorActual].nombre = palabra;
                                 caracter="";
                             }
                         }
@@ -175,16 +178,63 @@ class TrabajoArchivo {
                 }
                 
                 if( info == 'D') {
-                    numDirectoresTecnicos++;
+                    string caracter = "";
+                    int elem = 0;
+                    for (int i = line.size() - 1; i >= 0 ; i--)
+                    {
+                        caracter = line[i] + caracter;
+
+                        if ( i == 0 || line[ i - 1] == ' '){
+                            if( elem == 0 ){
+                                palabra = caracter;
+                                elem++;
+                                int exp = stoi(palabra);
+                                directoresTecnicos[directorActual].tiempoExperiencia = exp;
+                                caracter = "";
+                            }
+                            else if ( elem == 1){
+                                palabra = caracter;
+                                elem++;
+                                directoresTecnicos[directorActual].apellido = palabra;
+                                caracter = "";
+                            } 
+                            else if( elem == 2){
+                                palabra = caracter;
+                                elem++;
+                                directoresTecnicos[directorActual].nombre = palabra;
+                                caracter="";
+                            }   
+                        }
+                    }
+                    directorActual++;
                 }
 
-
-
+          
 
 
             }
             
         }
+    }
+
+    void agregarEquipo(string nombreEquipo) {
+        numEquipos++;
+        Equipos aux[numEquipos];
+
+        for(int i = 0; i < numEquipos - 1; i++) {
+            aux[i] = equipos[i];
+        }
+
+        delete []equipos;
+
+        equipos = new Equipos[numEquipos];
+
+        for (int i = 0; i < numEquipos; i++)
+        {
+            equipos[i]=aux[i];
+        }
+        
+
     }
 
     TrabajoArchivo( string nombreDeArchivo ) {
@@ -193,7 +243,7 @@ class TrabajoArchivo {
 
 };
 
-void menuEquipos () {
+void menuEquipos ( TrabajoArchivo entradaIn) {
     char op;
 
     do
@@ -206,6 +256,20 @@ void menuEquipos () {
         cout << "5- Volver" << endl;
 
         cin >> op;
+
+        switch (op)
+        {
+        case ('1'): {
+            string n;
+            cin >> n;
+
+            entradaIn.agregarEquipo(n);
+            
+            break;
+        }
+        default:
+            break;
+        }
 
     } while ( op != '5');
     
@@ -281,7 +345,7 @@ int main () {
         switch (op)
         {
         case '1':
-            menuEquipos();
+            menuEquipos(entradaIn);
             break;
         case '2':
             menuJugadores();
